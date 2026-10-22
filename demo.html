@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Happy Birthday 🎂</title>
+<link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Caveat:wght@600&family=Pacifico&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+
+<style>
+/* =====================================================================
+   CSS KA NAKSHA (har screen ka style alag section mein hai)
+   1. Basic   2. Pehla page   3. 3D cake   4. Letter   5. Photos scroll
+   6. Cake ceremony   7. Photo booth   8. Gift door   9. 3D room
+   ===================================================================== */
+
+/* ---------- 1. BASIC ---------- */
+:root{
+  --ink:#2a1740; --plum:#3b2a52; --pink:#ffb3c7; --lav:#b8a9e8;
+  /* Netlify ke logo se bachne ke liye neeche ke buttons itna upar rahenge.
+     Zyada upar chahiye to 88px ko barha do (jaise 110px). */
+  --bb:calc(88px + env(safe-area-inset-bottom,0px));
+}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%;overflow:hidden;font-family:Quicksand,system-ui,sans-serif;color:var(--ink);
+  background:linear-gradient(180deg,#fff2e8,#fde6dd 55%,#f8cbd3) fixed}
+
+/* Har screen ek .scr hai; sirf .on wali nazar aati hai */
+.scr{position:fixed;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;gap:18px;padding:24px 24px var(--bb)}
+.scr.on{display:flex;animation:fadeIn .8s}
+@keyframes fadeIn{from{opacity:0;transform:scale(.96)}}
+
+h1,h2{font-family:'Abril Fatface',Georgia,serif;font-weight:400;line-height:1.2}
+h1{font-size:clamp(34px,9vw,60px);background:linear-gradient(90deg,#c81e4b,#6a2c70);-webkit-background-clip:text;background-clip:text;color:transparent}
+h2{font-size:clamp(26px,7vw,40px);color:var(--plum)}
+p{font-size:18px;max-width:420px}
+.hide{display:none!important}
+.row{display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
+.card{background:#ffffffc8;backdrop-filter:blur(8px);border-radius:24px;padding:22px 26px;box-shadow:0 10px 30px #3b2a5233}
+.shake{animation:shake .4s}
+@keyframes shake{25%{transform:translateX(-10px)}75%{transform:translateX(10px)}}
+.pop{animation:pop 1s cubic-bezier(.2,1.6,.4,1) both}
+@keyframes pop{from{transform:scale(0) rotate(-8deg);opacity:0}}
+
+/* Buttons: .btn = gulabi, .teal = hara, .white = safed */
+.btn{font:700 17px Quicksand,sans-serif;border:0;border-radius:40px;padding:14px 28px;color:#fff;cursor:pointer;
+  background:linear-gradient(180deg,#e13a63,#c81e4b);box-shadow:0 8px 22px #c81e4b55;transition:transform .2s}
+.btn:active{transform:scale(.94)}
+.btn.teal{background:linear-gradient(135deg,#2fbfa6,#7a6bd8)}
+.btn.white{background:#fff;color:var(--plum);box-shadow:0 6px 16px #3b2a5233}
+
+/* Peeche jane wala button (sab screens par upar left) */
+#back{position:fixed;top:calc(12px + env(safe-area-inset-top,0px));left:12px;z-index:25;padding:9px 18px;font-size:15px;display:none}
+#back.on{display:block}
+
+/* Fireworks canvas aur girta hua confetti (poori site par) */
+#fx{position:fixed;inset:0;pointer-events:none;z-index:5}
+.confetti{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.confetti i{position:absolute;top:-20px;width:6px;height:16px;border-radius:4px;opacity:.8;animation:fall linear infinite}
+@keyframes fall{to{transform:translateY(110vh) rotate(360deg)}}
+
+/* ---------- 2. PEHLA PAGE ---------- */
+#land{justify-content:flex-start;padding-top:calc(40px + env(safe-area-inset-top,0px));gap:8px;overflow:hidden}
+.eyebrow{font-weight:700;letter-spacing:3px;color:#c81e4b;font-size:13px}
+.ttl{font:400 clamp(38px,11vw,56px) 'Abril Fatface',Georgia,serif;color:var(--ink);line-height:1.05}
+.hand{font:600 clamp(24px,7vw,32px) Caveat,cursive;color:var(--plum);margin-top:-4px}
+.hand mark{background:linear-gradient(transparent 62%,#ffd9a8 62%);color:#d6204f;padding:0 4px}
+.sub{font-size:16px;color:#6b5b73;max-width:300px}
+.openBtn{position:fixed;bottom:var(--bb);z-index:4;display:flex;align-items:center;gap:10px;padding:16px 36px;font-size:18px}
+
+/* ---------- 3. 3D CAKE (pehle page aur cake ceremony dono mein) ---------- */
+.hero{width:300px;height:300px;perspective:900px;display:flex;align-items:center;justify-content:center;
+  margin-top:10px;filter:drop-shadow(0 26px 24px #e0a0a855)}
+.cake3{position:relative;width:0;height:0;transform-style:preserve-3d;scale:.82;
+  animation:sway 7s ease-in-out infinite alternate}
+@keyframes sway{from{transform:rotateX(-14deg) rotateY(-28deg)}to{transform:rotateX(-14deg) rotateY(28deg)}}
+.cyl{position:absolute;left:0;top:0;transform-style:preserve-3d}   /* ek gol tukda (cylinder) */
+.cyl i{position:absolute;left:0;top:0;display:block}
+
+/* ---------- 4. LETTER SCREEN ---------- */
+.balloons{position:fixed;inset:0;pointer-events:none;overflow:hidden}
+.balloons i{position:absolute;bottom:-90px;width:44px;height:56px;border-radius:50% 50% 48% 48%;opacity:.85;animation:up 7s linear infinite}
+@keyframes up{to{transform:translateY(-120vh) rotate(12deg)}}
+.letter{position:absolute;left:50%;top:52%;width:min(86vw,380px);z-index:3;background:#fffdf7;border:2px solid #ffd3e0;
+  transform:translate(-50%,-50%) scale(0) rotate(-6deg);opacity:0;
+  transition:transform .9s cubic-bezier(.2,1.2,.4,1),opacity .6s}
+.letter.open{transform:translate(-50%,-50%) scale(1) rotate(0);opacity:1}
+.letter h2{font-size:28px}
+.letter p{margin:10px auto}
+#startBtn{position:fixed;bottom:var(--bb);z-index:4}
+
+/* ---------- 5. PHOTOS SCROLL ---------- */
+#party{display:none;overflow-y:scroll;padding:0}
+#party.on{display:block}
+#photoLayer{position:fixed;inset:0;overflow:hidden;pointer-events:none}
+.ph{position:absolute;top:0;left:0;width:min(62vw,230px);aspect-ratio:3/4;border-radius:20px;border:6px solid #fff;
+  box-shadow:0 12px 30px #3b2a5255;background-size:cover;background-position:center;
+  display:flex;align-items:center;justify-content:center;font-size:64px;will-change:transform}
+#hint{position:fixed;top:calc(18px + env(safe-area-inset-top,0px));left:0;right:0;text-align:center;font-weight:700;z-index:6;pointer-events:none;transition:opacity .4s}
+#partyBtn{position:fixed;left:50%;bottom:var(--bb);transform:translateX(-50%);z-index:6;white-space:nowrap}
+
+/* ---------- 6. CAKE CEREMONY ---------- */
+.cst{position:relative;width:300px;height:310px;flex:none}
+.pic{position:absolute;top:-6px;left:50%;margin-left:-100px;width:200px;height:200px;border-radius:50%;border:6px solid #fff;
+  background:linear-gradient(135deg,var(--pink),var(--lav)) center/cover;display:flex;align-items:center;justify-content:center;
+  font-size:80px;box-shadow:0 10px 26px #3b2a5244}
+.cw{position:absolute;inset:0}
+.cw .hero{position:absolute;inset:0;width:100%;height:100%;margin:0}
+.half{position:absolute;inset:0;transition:transform 1s}           /* cake 2 hisson mein katta hai */
+.half.a{clip-path:inset(0 50% 0 0)} .half.b{clip-path:inset(0 0 0 50%)}
+.cw.cut .a{transform:translateX(-22px) rotate(-5deg)}
+.cw.cut .b{transform:translateX(22px) rotate(5deg)}
+.cw.off .flame{display:none}                                       /* phoonk se candle band */
+#level{width:160px;height:8px;border-radius:6px;background:#ffffff99;overflow:hidden}
+#level i{display:block;height:100%;width:0;background:var(--plum)}
+
+/* ---------- 7. PHOTO BOOTH ---------- */
+#cam{justify-content:flex-start;overflow-y:auto;padding-top:64px;gap:12px}
+.camBody{width:min(84vw,320px);padding:16px;border-radius:34px;background:linear-gradient(160deg,#fff,#ffe1ee);
+  border:3px solid #ffffffcc;box-shadow:0 12px 28px #3b2a5255;display:flex;flex-direction:column;align-items:center;gap:10px}
+.camTop{display:flex;align-items:center;justify-content:space-between;width:100%;font:700 12px Quicksand,sans-serif;letter-spacing:2px;color:#ec4899}
+.led{width:12px;height:12px;border-radius:50%;background:#ec4899;box-shadow:0 0 8px #ec4899;animation:blink 1.4s infinite}
+.led.g{background:#2fbfa6;box-shadow:0 0 8px #2fbfa6}
+@keyframes blink{50%{opacity:.35}}
+.lens{position:relative;width:100%;padding:10px;border-radius:50%;display:flex;justify-content:center;
+  background:conic-gradient(#ec4899,#a78bfa,#2fbfa6,#ec4899)}
+.lens video{width:100%;aspect-ratio:1;object-fit:cover;border-radius:50%;border:6px solid #1d1a3d;background:#222;transform:scaleX(-1)}
+#count{position:absolute;top:50%;transform:translateY(-50%);font:400 80px Pacifico,cursive;color:#fff;text-shadow:0 4px 14px #0008;pointer-events:none}
+.shutter{width:64px;height:64px;border-radius:50%;border:6px solid #fff;background:#ec4899;cursor:pointer;
+  box-shadow:0 0 0 3px #ec4899,0 8px 18px #ec489966}
+.shutter:active{transform:scale(.9)} .shutter:disabled{opacity:.5}
+#flash{position:fixed;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:35}
+#flash.go{animation:flash .5s}
+@keyframes flash{from{opacity:.9}}
+.slot{flex:none;width:min(84vw,320px);height:10px;border-radius:6px;background:#1d1a3d;margin-top:-4px}
+.tray{flex:none;width:min(90vw,360px);height:170px;overflow:hidden auto;display:flex;flex-wrap:wrap;gap:10px;justify-content:center;align-content:flex-start}
+.print{width:118px;background:#fff;padding:8px 8px 10px;border-radius:4px;box-shadow:0 6px 14px #3b2a5244;cursor:pointer;
+  transform:rotate(var(--r,0deg));animation:slideOut 1.2s ease-out}
+.print img{width:100%;aspect-ratio:1;object-fit:cover;display:block}
+.print .cap{text-align:center;margin:6px 0 2px;font:400 11px Pacifico,cursive}
+@keyframes slideOut{from{transform:translateY(-190px) rotate(0)}}
+
+/* ---------- 8. GIFT DOOR, PASSWORD, VIDEO, PHOTO POPUP ---------- */
+#door{position:relative;width:180px;height:270px;perspective:700px}
+.doorFrame{position:absolute;inset:0;border:10px solid #fff;border-radius:90px 90px 0 0;font-size:60px;
+  background:radial-gradient(circle,#fff6b0,#ffb3c7 70%);display:flex;align-items:center;justify-content:center}
+.doorLeaf{position:absolute;inset:10px;border-radius:80px 80px 0 0;border:3px solid #ffffff88;transform-origin:left;
+  background:linear-gradient(135deg,#7a6bd8,#b8a9e8);transition:transform 1.4s}
+.doorLeaf:after{content:"";position:absolute;right:16px;top:55%;width:14px;height:14px;border-radius:50%;background:#ffd36e}
+#door.open .doorLeaf{transform:rotateY(-110deg)}
+.modal{position:fixed;inset:0;z-index:20;background:#2a174088;display:none;align-items:center;justify-content:center;padding:20px}
+.modal.on{display:flex}
+input{font:700 18px Quicksand,sans-serif;padding:12px 16px;border-radius:16px;border:2px solid var(--lav);width:100%;text-align:center;margin:10px 0;background:#fff;color:var(--ink)}
+#videoBox{position:fixed;inset:0;z-index:30;background:#1d1a3d;display:none;align-items:center;justify-content:center}
+#videoBox.on{display:flex}
+.vh,.vh video{width:min(94vw,640px);aspect-ratio:16/9;border-radius:18px;background:#000;color:#fff;
+  display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;font-size:20px}
+#photoPop{position:fixed;inset:0;z-index:40;background:#1d1a3dd9;display:none;align-items:center;justify-content:center;padding:20px}
+#photoPop.on{display:flex}
+#photoPop .big{width:min(86vw,420px);aspect-ratio:3/4;max-height:80vh;border:8px solid #fff;border-radius:14px;
+  background:linear-gradient(135deg,var(--pink),var(--lav)) center/cover;display:flex;align-items:center;justify-content:center;font-size:110px}
+
+/* ---------- 9. 3D ROOM ---------- */
+#room{padding:0;background:#2a1740;overflow:hidden}
+.stage{position:absolute;inset:0;perspective:520px;touch-action:none;display:flex;align-items:center;justify-content:center}
+.rm{position:relative;width:0;height:0;transform-style:preserve-3d}
+.wall{position:absolute;left:-300px;top:-200px;width:600px;height:400px;display:flex;align-items:center;justify-content:space-around;border:2px solid #ffffff44}
+.w0 {
+  transform: rotateY(0) translateZ(-300px);
+  background:
+    linear-gradient(#0002, #0002),
+    url('./cover.png') center / cover no-repeat;
+}.w1{transform:rotateY(90deg) translateZ(-300px);background:linear-gradient(#a8e6dc,#d8f6f0)} /* side ki deewar: TV */
+.w2{transform:rotateY(180deg) translateZ(-300px);background:linear-gradient(#ffd3c2,#ffe9df)}
+.floor,.ceil{position:absolute;left:-300px;top:-300px;width:600px;height:600px}
+.floor{transform:rotateX(90deg) translateZ(-200px);background:repeating-conic-gradient(#8f7fd9 0 25%,#b8a9e8 0 50%) 0 0/100px 100px}
+.ceil{transform:rotateX(-90deg) translateZ(-200px);background:#f4efff}
+.fr{width:120px;height:150px;border:8px solid #fff;border-radius:8px;box-shadow:0 6px 14px #0003;cursor:pointer;
+  background:linear-gradient(135deg,var(--pink),var(--lav)) center/cover;display:flex;align-items:center;justify-content:center;font-size:46px}
+.tvb{display:flex;flex-direction:column;align-items:center;gap:12px}
+.tv{width:340px;height:200px;border:10px solid #1d1a3d;border-radius:12px;background:#0b0a1a;box-shadow:0 10px 24px #0005;overflow:hidden}
+.tv .vh,.tv video{width:100%;height:100%;border-radius:0;font-size:14px}
+.poster{width:100%;height:100%;background:linear-gradient(135deg,#ff7aa2,#7a6bd8);color:#fff;display:flex;align-items:center;
+  justify-content:center;flex-direction:column;gap:8px;font:400 22px Pacifico,cursive}
+.power{width:46px;height:46px;border-radius:50%;border:0;font-size:22px;background:#e0495f;color:#fff;box-shadow:0 4px 12px #0005;cursor:pointer}
+.power.on{background:#2fbfa6}
+#exit{position:fixed;top:calc(12px + env(safe-area-inset-top,0px));right:12px;z-index:9}
+.nav{position:fixed;bottom:var(--bb);left:0;right:0;z-index:9;display:flex;justify-content:center;align-items:center;gap:16px;color:#fff;font-weight:700}
+
+.nav .btn{padding:10px 22px}
+
+.poster {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(#0003, #0008), url('./cover.png') center/cover no-repeat;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 8px;
+  font: 400 22px Pacifico, cursive;
+}
+
+</style>
+</head>
+
+<body>
+<canvas id="fx"></canvas>
+<button class="btn white" id="back">‹ Back</button>
+
+<!-- =============== SCREEN 1: PEHLA PAGE =============== -->
+<section class="scr on" id="land">
+  <small class="eyebrow">A GIFT FOR YOU</small>
+  <div class="ttl">Happy birthday!</div>
+  <div class="hand">for being so <mark>wonderful</mark></div>
+  <p class="sub">Someone threw a little party just for you.</p>
+  <div class="hero"><div class="cake3" id="heroCake"></div></div>
+  <button class="btn openBtn" id="openBtn">🎁 Open my gift</button>
+</section>
+
+<!-- =============== SCREEN 2: HAPPY BIRTHDAY + LETTER =============== -->
+<section class="scr" id="rev">
+  <div class="balloons" id="balloons"></div>
+  <h1 class="pop">Happy Birthday</h1>
+  <h2 class="pop" id="nameTitle" style="animation-delay:.5s"></h2>
+  <div class="card letter" id="letter">
+    <h2>Dear <span id="nameLetter"></span> 💌</h2>
+    <p id="wishText"></p>
+    <b id="fromText"></b>
+  </div>
+  <button class="btn hide" id="startBtn">Start Birthday Party 🎈</button>
+</section>
+
+<!-- =============== SCREEN 3: PHOTOS (scroll karo) =============== -->
+<section class="scr" id="party">
+  <div id="hint">Scroll karo ⬇️</div>
+  <div id="photoLayer"></div>
+  <div id="spacer"></div>
+  <button class="btn teal hide" id="partyBtn">Cake Ceremony 🎂</button>
+</section>
+
+<!-- =============== SCREEN 4: CAKE CEREMONY =============== -->
+<section class="scr" id="cake">
+  <h2>Make a wish… ✨</h2>
+  <div class="cst">
+    <div class="pic" id="cakePic"></div>
+    <div class="cw" id="cakeBox"></div>
+  </div>
+  <div class="row">
+    <button class="btn" id="blowBtn">Phook maro 💨</button>
+    <button class="btn teal hide" id="boothBtn">Photo Shoot 📸</button>
+  </div>
+  <div id="level"><i></i></div>
+  <p id="cakeMsg" style="font-size:15px">Mic allow karo aur phoonk maro 🎤 (ya button dabao)</p>
+  <button class="btn teal hide" id="micBtn">🎤 Mic on karo</button>
+</section>
+
+<!-- =============== SCREEN 5: PHOTO BOOTH =============== -->
+<section class="scr" id="cam">
+  <h2 style="font-size:26px">Please smile 😊<br><small style="font:700 15px Quicksand,sans-serif">Capture your image</small></h2>
+  <div class="camBody">
+    <div class="camTop"><i class="led"></i><b>BIRTHDAY CAM</b><i class="led g"></i></div>
+    <div class="lens"><video id="camVideo" autoplay playsinline muted></video><span id="count"></span></div>
+    <button class="shutter" id="snapBtn" aria-label="Capture"></button>
+    <!-- Camera na chale to ye button aata hai (gallery/camera se photo) -->
+    <label class="btn teal hide" id="fileLabel">Photo lo 📷<input type="file" accept="image/*" capture="user" id="fileInput" hidden></label>
+  </div>
+  <div id="flash"></div>
+  <div class="slot"></div>
+  <div class="tray" id="tray"></div>
+  <button class="btn teal hide" id="toGift">Your Gift 🎁</button>
+</section>
+
+<!-- =============== SCREEN 6: GIFT DOOR =============== -->
+<section class="scr" id="gift">
+  <div id="door"><div class="doorFrame">🎀</div><div class="doorLeaf"></div></div>
+  <button class="btn" id="pwBtn">Enter password 🔑</button>   <!-- door ke neeche -->
+</section>
+
+<!-- =============== SCREEN 7: 3D ROOM =============== -->
+<section class="scr" id="room">
+  <button class="btn white" id="exit">Exit room ✕</button>
+  <div class="stage" id="stage">
+    <div class="rm" id="rm">
+      <div class="wall w0" id="frontWall"></div>
+      <div class="wall w1" id="tvWall"></div>
+      <!-- <div class="wall w2"></div> -->
+      <div class="floor"></div><div class="ceil"></div>
+    </div>
+  </div>
+  <div class="nav"><button class="btn" id="leftBtn">‹</button><span>drag ya arrows se ghumo</span><button class="btn" id="rightBtn">›</button></div>
+</section>
+
+<!-- =============== POPUPS =============== -->
+<div class="modal" id="pwModal"><div class="card" style="width:min(90vw,340px)">
+  <h2 style="font-size:26px">Enter password</h2>
+  <input id="pwInput" type="password" inputmode="numeric" placeholder="••••••" autocomplete="off">
+  <p id="pwError" style="font-size:15px;min-height:22px"></p>
+  <div class="row"><button class="btn" id="pwOk">Unlock</button><button class="btn white" id="pwCancel">Cancel</button></div>
+</div></div>
+<div id="photoPop"><div class="big"></div></div>
+<div id="videoBox"><button class="btn white" style="position:fixed;top:14px;right:14px" id="videoClose">✕</button><div class="vh" id="videoHost"></div></div>
+
+
+<script>
+
+(() => {
+
+    // Right Click Disable
+    document.addEventListener("contextmenu", e => e.preventDefault());
+
+    // Keyboard Shortcuts Disable
+    document.addEventListener("keydown", e => {
+
+        if (
+            e.key === "F12" ||
+            (e.ctrlKey && e.shiftKey && ["I", "J", "C"].includes(e.key.toUpperCase())) ||
+            (e.ctrlKey && ["U"].includes(e.key.toUpperCase()))
+        ) {
+            e.preventDefault();
+            return false;
+        }
+
+    });
+
+    // Drag Disable
+    document.addEventListener("dragstart", e => e.preventDefault());
+    setInterval(() => {
+
+        const w = window.outerWidth - window.innerWidth > 160;
+        const h = window.outerHeight - window.innerHeight > 160;
+
+        if (w || h) {
+
+            if (!document.querySelector("#shield")) {
+
+                const x = document.createElement("div");
+
+                x.id = "shield";
+
+                x.style.cssText = `
+                    position:fixed;
+                    inset:0;
+                    background:#111;
+                    display:flex;
+                    justify-content:center;
+                    align-items:center;
+                    z-index:999999;
+                    font-size:40px;
+                    color:#fff;
+                    backdrop-filter:blur(20px);
+                `;
+
+                x.innerHTML = "Inspection Disabled";
+
+                document.body.appendChild(x);
+
+                document.body.style.filter = "blur(20px)";
+            }
+
+        }
+
+    }, 1000);
+
+    console.clear();
+
+    Object.defineProperty(window, "console", {
+        value: {
+            log() {},
+            warn() {},
+            error() {},
+            info() {},
+            clear() {}
+        }
+    });
+
+})();
+
+/* =====================================================================
+   ★★★  YAHAN SE APNI CHEEZEIN BADLO (sirf yehi hissa edit karna hai)  ★★★
+   ===================================================================== */
+const CONFIG = {
+  name: "Alisha",      // jis ka birthday hai uska naam
+  from: "Star",                   // aap ka naam (khali chor sakte ho)
+  wish: [                     // letter ki 2 lines
+    "May your day be as sweet as your smile ✨",
+    "Stay happy, stay glowing — you deserve the whole world 💖"
+  ],
+
+  /* PHOTOS: apni images "images" naam ke folder mein rakho (index.html ke saath)
+     aur yahan unke naam likho. 10 tak. Jitni likho gi utni dikhengi.
+     Misal:  photos: ["images/1.jpg", "images/2.jpg", "images/3.jpg"]  */
+  photos: [
+    './1.jpeg',
+    './2.jpeg',
+    './4.jpeg',
+    './6.png',
+    './3.jpeg',
+    './8.png',
+    './11.png',
+    './10.png',
+    './7.png',
+    './5.jpeg',
+],
+wallPhotos: [
+'./16.jpg',
+'./13.jpg',
+'./14.jpg',
+'./15.jpg',
+],
+
+  cakePhoto: "./5.jpeg",              // cake ke peeche wali photo (khali = photos[0])
+  song: "./song.mp3",                   // apna gaana: "song.mp3" (khali = built-in Happy Birthday tune)
+  giftVideo: "./video.mp4",              // 123456 password par chalne wali video: "videos/gift.mp4"
+  tvVideo: "./secret.mp4",                // room ke TV par chalne wali video: "videos/tv.mp4"
+  tvCover: "./cover.png",
+
+  passwordNormal: "123456",   // is par sirf video chalti hai
+  passwordSecret: "031406"    // is par 3D room khulta hai
+};
+/* ===================== EDIT KHATAM ===================== */
+
+
+/* ---------- Chhote helpers ---------- */
+const $ = s => document.querySelector(s);
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const EMOJI = ['🌸','🎀','🦋','🌷','✨','💖','🧁','🌈'];
+const photo = i => CONFIG.photos.length ? CONFIG.photos[i % CONFIG.photos.length] : "";   // i-th photo ka link
+const bgStyle = i => photo(i) ? `style="background-image:url('${photo(i)}')"` : "";       // photo ya khali
+const face = i => photo(i) ? "" : EMOJI[i % EMOJI.length];                                // photo na ho to emoji
+
+let fireworksOn = false, micStream = null, camStream = null, tvOn = false;   // sab screens ki state
+
+
+/* =====================================================================
+   SCREEN BADALNA + BACK BUTTON
+   ===================================================================== */
+const history_ = [];
+function show(id, isBack) {
+  const current = document.querySelector('.scr.on');
+  if (current && !isBack && current.id !== id) history_.push(current.id);
+  document.querySelectorAll('.scr').forEach(s => s.classList.remove('on'));
+  $('#' + id).classList.add('on');
+  $('#back').classList.toggle('on', history_.length > 0);
+}
+function goBack() {
+  const prev = history_.pop();
+  if (!prev) return;
+  fireworksOn = false; tvOn = false;
+  stopStream(micStream); stopStream(camStream);          // mic/camera band
+  show(prev, true);
+  if (prev === 'cam') startCamera();
+  if (prev === 'party') placePhotos();
+}
+const stopStream = s => s && s.getTracks().forEach(t => t.stop());
+$('#back').onclick = goBack;
+$('#exit').onclick = goBack;
+
+
+/* =====================================================================
+   FIREWORKS + CONFETTI (girne wale rang-birangi tukde)
+   ===================================================================== */
+const canvas = $('#fx'), ctx = canvas.getContext('2d');
+let sparks = [], lastBurst = 0;
+const fit = () => { canvas.width = innerWidth; canvas.height = innerHeight; };
+fit(); addEventListener('resize', fit);
+
+function burst(x, y) {                       // ek dhamaka
+  const hue = Math.random() * 360;
+  for (let i = 0; i < 70; i++) {
+    const a = Math.random() * 6.28, s = Math.random() * 5 + 1;
+    sparks.push({ x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s, life: 90, hue: hue + Math.random() * 40 });
+  }
+}
+(function animate(t) {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  if (fireworksOn && t - lastBurst > 550) { lastBurst = t; burst(Math.random() * canvas.width, Math.random() * canvas.height * .6 + 40); }
+  sparks = sparks.filter(p => p.life > 0);
+  for (const p of sparks) {
+    p.x += p.vx; p.y += p.vy; p.vy += .05; p.vx *= .99; p.life--;
+    ctx.globalAlpha = p.life / 90;
+    ctx.fillStyle = `hsl(${p.hue},90%,65%)`;
+    ctx.beginPath(); ctx.arc(p.x, p.y, 2.6, 0, 6.28); ctx.fill();
+  }
+  requestAnimationFrame(animate);
+})(0);
+
+(function makeConfetti() {                   // confetti sab screens ke peeche girta rehta hai
+  const box = document.createElement('div'); box.className = 'confetti';
+  const colors = ['#f6a5b8', '#a8e6c9', '#c4b5fd', '#ffd36e', '#ff8f70'];
+  for (let i = 0; i < 24; i++) {
+    const piece = document.createElement('i');
+    piece.style.cssText = `left:${Math.random() * 100}%;background:${colors[i % 5]};` +
+      `animation-duration:${6 + Math.random() * 7}s;animation-delay:${-Math.random() * 10}s`;
+    box.appendChild(piece);
+  }
+  document.body.prepend(box);
+})();
+
+
+/* =====================================================================
+   GAANA (apna mp3 ho to wo, warna built-in Happy Birthday tune)
+   ===================================================================== */
+let audioCtx;
+function playSong() {
+  if (CONFIG.song) { new Audio(CONFIG.song).play().catch(() => {}); return; }
+  try {
+    audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+    const freq = { C: 261.6, D: 293.7, E: 329.6, F: 349.2, G: 392, A: 440, B: 466.2, H: 523.3 };
+    const notes = "C.25 C.25 D.5 C.5 F.5 E1 C.25 C.25 D.5 C.5 G.5 F1 C.25 C.25 H.5 A.5 F.5 E.5 D.5 B.25 B.25 A.5 F.5 G.5 F1".split(" ");
+    let t = audioCtx.currentTime + .1;
+    for (const n of notes) {                 // har note: naam + lambai
+      const len = parseFloat(n.slice(1)) * .8, osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+      osc.type = 'triangle'; osc.frequency.value = freq[n[0]];
+      gain.gain.setValueAtTime(.0001, t);
+      gain.gain.exponentialRampToValueAtTime(.25, t + .03);
+      gain.gain.exponentialRampToValueAtTime(.0001, t + len);
+      osc.connect(gain).connect(audioCtx.destination);
+      osc.start(t); osc.stop(t + len + .05); t += len;
+    }
+  } catch (e) {}
+}
+
+
+/* =====================================================================
+   3D CAKE BANANA
+   cyl() ek gol tukda banata hai (r=radius, h=height, y=oopar/neeche, c=rang,
+   x/z = idhar udhar). Cake isi se bana hai: stand, 2 tiers, macarons, candles.
+   ===================================================================== */
+function cyl(parent, r, h, y, color, sides = 28, x = 0, z = 0) {
+  const g = document.createElement('div');
+  g.className = 'cyl';
+  g.style.transform = `translate3d(${x}px,${y}px,${z}px)`;
+  const w = 2 * Math.PI * r / sides + 1;
+  for (let i = 0; i < sides; i++) {          // side ki patliyan
+    const s = document.createElement('i');
+    s.style.cssText = `width:${w}px;height:${h}px;margin:${-h / 2}px 0 0 ${-w / 2}px;background:${color};` +
+      `transform:rotateY(${i * 360 / sides}deg) translateZ(${r}px)`;
+    g.appendChild(s);
+  }
+  const top = document.createElement('i');   // upar ka gol dhakkan
+  top.style.cssText = `width:${2 * r}px;height:${2 * r}px;margin:${-r}px 0 0 ${-r}px;border-radius:50%;background:${color};` +
+    `filter:brightness(1.12);transform:translateY(${-h / 2}px) rotateX(90deg)`;
+  g.appendChild(top);
+  parent.appendChild(g);
+  return g;
+}
+
+function buildCake(target) {                 // target = jis div mein cake banana hai
+  const c = typeof target === 'string' ? $(target) : target;
+  c.innerHTML = '';
+  const K = ['#9be7d5', '#ffd36e', '#ffb3c7', '#c4b5fd', '#ff9e7a'];
+  cyl(c, 52, 10, 138, '#ebe5e1'); cyl(c, 22, 48, 108, '#f1ece8'); cyl(c, 115, 12, 80, '#f7f4f1');   // safed stand
+  cyl(c, 95, 64, 42, '#c9aef0');                                                                    // neeche ki tier (jamni)
+  for (let i = 0; i < 20; i++) { const a = i * Math.PI / 10; cyl(c, 6, 12, 70, '#b794ea', 8, Math.cos(a) * 97, Math.sin(a) * 97); }  // moti
+  cyl(c, 68, 56, -18, '#ffb3c8'); cyl(c, 71, 10, -44, '#ffd9e4');                                   // upar ki tier (gulabi)
+  for (let i = 0; i < 7; i++) { const a = i * Math.PI * 2 / 7; cyl(c, 9, 12, -54, K[i % 5], 10, Math.cos(a) * 52, Math.sin(a) * 52); }  // macarons
+  cyl(c, 11, 13, -58, '#e8284f', 10);                                                               // lal dil
+  for (let i = 0; i < 5; i++) {                                                                     // 5 candles + lau
+    const a = i * Math.PI * 2 / 5, x = Math.cos(a) * 30, z = Math.sin(a) * 30;
+    cyl(c, 3, 32, -72, K[i], 8, x, z);
+    cyl(c, 4, 10, -93, '#ffc93c', 8, x, z).classList.add('flame');
+  }
+}
+buildCake('#heroCake');
+
+
+/* =====================================================================
+   SCREEN 1 -> 2 : "Open my gift" dabane par
+   ===================================================================== */
+$('#openBtn').onclick = () => {
+  show('rev');
+  $('#nameTitle').textContent = $('#nameLetter').textContent = CONFIG.name;
+  $('#wishText').innerHTML = CONFIG.wish.join('<br>');
+  $('#fromText').textContent = CONFIG.from ? `— with love, ${CONFIG.from} 💌` : '';
+  $('#letter').classList.remove('open');
+  $('#startBtn').classList.add('hide');
+  setTimeout(() => $('#letter').classList.add('open'), 1500);          // letter khulta hai
+  setTimeout(() => $('#startBtn').classList.remove('hide'), 3000);     // phir button aata hai
+  $('#balloons').innerHTML = Array.from({ length: 14 }, (_, i) =>
+    `<i style="left:${i * 7 + 2}%;background:hsl(${i * 40},80%,75%);animation-delay:${i * .5}s"></i>`).join('');
+  playSong();
+  fireworksOn = true; setTimeout(() => fireworksOn = false, 4500);
+};
+
+
+/* =====================================================================
+   SCREEN 3 : PHOTOS — scroll karne par upar jati hain
+   ===================================================================== */
+const PHOTO_COUNT = Math.min(CONFIG.photos.length || 10, 10);
+let step = 0, cardH = 0, maxScroll = 0;
+
+$('#startBtn').onclick = () => {
+  show('party'); fireworksOn = true;
+  const layer = $('#photoLayer'); layer.innerHTML = ''; $('#party').scrollTop = 0;
+  const w = Math.min(innerWidth * .62, 230);
+  cardH = w * 4 / 3; step = cardH * 1.15;                                         // 2 photos ke beech faasla
+  maxScroll = (PHOTO_COUNT - 1) * step + innerHeight / 2 + cardH / 2;             // kitna scroll hoga
+  $('#spacer').style.height = (maxScroll + innerHeight) + 'px';
+  for (let i = 0; i < PHOTO_COUNT; i++) {
+    const d = document.createElement('div');
+    d.className = 'ph';
+    if (photo(i)) d.style.backgroundImage = `url('${photo(i)}')`; else d.textContent = face(i);
+    const side = i === PHOTO_COUNT - 1 ? 0 : (i % 2 ? 1 : -1) * Math.min(innerWidth * .12, 120);   // left/right, aakhri beech mein
+    d.style.left = (innerWidth / 2 - w / 2 + side) + 'px';
+    layer.appendChild(d);
+  }
+  placePhotos();
+};
+$('#party').onscroll = placePhotos;
+
+function placePhotos() {                      // scroll ke hisaab se har photo ki jagah
+  const t = $('#party').scrollTop, cards = $('#photoLayer').children;
+  if (!cards.length) return;
+  for (let i = 0; i < cards.length; i++) {
+    let y = innerHeight - (t - i * step);
+    if (i === PHOTO_COUNT - 1) y = Math.max(y, (innerHeight - cardH) / 2 - 40);   // aakhri photo aadhi screen par rukti hai
+    cards[i].style.transform = `translateY(${y}px) rotate(${i % 2 ? 4 : -4}deg)`;
+  }
+  $('#partyBtn').classList.toggle('hide', t < maxScroll - 8);                     // aakhir mein Cake button
+  $('#hint').style.opacity = t > 40 ? 0 : 1;
+}
+$('#partyBtn').onclick = () => { fireworksOn = false; show('cake'); initCake(); };
+
+
+/* =====================================================================
+   SCREEN 4 : CAKE CEREMONY (phoonk se candle band, phir cake cut)
+   ===================================================================== */
+let blown = false;
+
+function initCake() {
+  const pic = CONFIG.cakePhoto || photo(0);
+  $('#cakePic').style.backgroundImage = pic ? `url('${pic}')` : '';
+  $('#cakePic').textContent = pic ? '' : '👧';
+  // cake 2 baar banta hai (left/right half) taake katne par alag ho sake
+  $('#cakeBox').innerHTML = '<div class="half a"><div class="hero"><div class="cake3" id="cakeA"></div></div></div>' +
+                            '<div class="half b"><div class="hero"><div class="cake3" id="cakeB"></div></div></div>';
+  buildCake('#cakeA'); buildCake('#cakeB');
+  $('#cakeBox').className = 'cw';
+  blown = false;
+  listenForBlow();
+}
+
+async function listenForBlow() {              // mic se phoonk sunna
+  try {
+    $('#micBtn').classList.add('hide');
+    micStream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false } });
+    const a = new (window.AudioContext || window.webkitAudioContext)(); await a.resume();
+    const an = a.createAnalyser(); an.fftSize = 1024;
+    a.createMediaStreamSource(micStream).connect(an);
+    const data = new Uint8Array(an.fftSize);
+    let hits = 0, base = 0, n = 0;
+    $('#cakeMsg').textContent = "🎤 Sun raha hoon… candle par phoonk maro";
+    (function check() {
+      if (blown) return;
+      an.getByteTimeDomainData(data);
+      let sum = 0; for (const v of data) { const x = (v - 128) / 128; sum += x * x; }
+      const loud = Math.sqrt(sum / data.length);
+      if (n < 30) { base += loud / 30; n++; }                       // pehle 30 frame: aas paas ka shor naapna
+      $('#level i').style.width = Math.min(100, loud * 500) + '%';
+      hits = n >= 30 && loud > Math.max(.05, base * 2.5) ? hits + 1 : 0;
+      if (hits > 4) blowOut(); else requestAnimationFrame(check);
+    })();
+  } catch (e) {
+    $('#micBtn').classList.remove('hide');
+    $('#cakeMsg').textContent = "Mic nahi chala (" + (e.name || 'error') + ") — Mic on karo dabao ya Phook button use karo";
+  }
+}
+$('#micBtn').onclick = listenForBlow;
+
+async function blowOut() {
+  if (blown) return; blown = true;
+  stopStream(micStream);
+  $('#cakeBox').classList.add('off');                                // candles bujh gayi
+  $('#cakeMsg').textContent = "Wish pooori hogi 💫";
+  await sleep(1500);
+  $('#cakeBox').classList.add('cut');                                // cake cut
+  fireworksOn = true; burst(innerWidth / 2, innerHeight / 3); setTimeout(() => fireworksOn = false, 3500);
+  $('#blowBtn').classList.add('hide'); $('#boothBtn').classList.remove('hide');
+  $('#cakeMsg').textContent = "Cake cut ho gaya 🍰 Enjoy!";
+}
+$('#blowBtn').onclick = blowOut;
+
+
+/* =====================================================================
+   SCREEN 5 : PHOTO BOOTH (camera, countdown, polaroid print)
+   ===================================================================== */
+$('#boothBtn').onclick = () => {
+  show('cam'); $('#tray').innerHTML = ''; $('#toGift').classList.add('hide'); startCamera();
+};
+async function startCamera() {
+  try {
+    camStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
+    $('#camVideo').srcObject = camStream;
+  } catch (e) {                                                      // camera na mile to file wala button
+    $('#snapBtn').classList.add('hide'); $('#fileLabel').classList.remove('hide'); $('#camVideo').style.display = 'none';
+  }
+}
+$('#snapBtn').onclick = async () => {
+  const b = $('#snapBtn'); b.disabled = true;
+  for (const n of [3, 2, 1, '😊']) { $('#count').textContent = n; await sleep(800); }   // countdown
+  $('#count').textContent = '';
+  $('#flash').classList.add('go'); setTimeout(() => $('#flash').classList.remove('go'), 500);
+  const v = $('#camVideo'); makePrint(v, v.videoWidth, v.videoHeight, true);
+  b.disabled = false;
+};
+$('#fileInput').onchange = e => {
+  const f = e.target.files[0]; if (!f) return;
+  const im = new Image(); im.onload = () => makePrint(im, im.width, im.height, false); im.src = URL.createObjectURL(f);
+};
+function makePrint(src, w, h, mirror) {       // photo ko square kaat kar polaroid banata hai
+  if (!w) return;
+  const s = Math.min(w, h), cn = document.createElement('canvas'); cn.width = cn.height = 480;
+  const x = cn.getContext('2d');
+  if (mirror) { x.translate(480, 0); x.scale(-1, 1); }
+  x.drawImage(src, (w - s) / 2, (h - s) / 2, s, s, 0, 0, 480, 480);
+  const url = cn.toDataURL('image/jpeg', .85), d = document.createElement('div');
+  d.className = 'print'; d.style.setProperty('--r', (Math.random() * 8 - 4) + 'deg');
+  d.innerHTML = `<img src="${url}"><div class="cap">Happy Birthday ${CONFIG.name} 🎂</div>`;
+  d.onclick = () => openPhoto(url, 0);
+  $('#tray').prepend(d); $('#toGift').classList.remove('hide');
+}
+$('#toGift').onclick = () => { stopStream(camStream); show('gift'); };
+
+
+/* =====================================================================
+   SCREEN 6 : GIFT DOOR + PASSWORD
+   ===================================================================== */
+$('#pwBtn').onclick = () => { $('#pwModal').classList.add('on'); $('#pwInput').value = ''; $('#pwError').textContent = ''; $('#pwInput').focus(); };
+$('#pwCancel').onclick = () => $('#pwModal').classList.remove('on');
+$('#pwOk').onclick = async () => {
+  const v = $('#pwInput').value.trim();
+  if (v === CONFIG.passwordNormal) {                                 // normal password: sirf video
+    $('#pwModal').classList.remove('on');
+    playVideo($('#videoHost'), CONFIG.giftVideo, () => {}, true);
+    $('#videoBox').classList.add('on');
+  } else if (v === CONFIG.passwordSecret) {                          // secret password: darwaza khulta hai -> room
+    $('#pwModal').classList.remove('on');
+    $('#door').classList.add('open'); await sleep(1600); $('#door').classList.remove('open');
+    buildRoom(); show('room');
+  } else {
+    $('#pwError').textContent = "Galat password 🙈";
+    const box = $('#pwModal .card'); box.classList.add('shake'); setTimeout(() => box.classList.remove('shake'), 400);
+  }
+};
+$('#videoClose').onclick = () => { $('#videoBox').classList.remove('on'); $('#videoHost').innerHTML = ''; };
+
+function playVideo(host, src, onEnd, controls) {   // video ho to chalao, warna demo message
+  if (src) {
+    host.innerHTML = `<video src="${src}" autoplay playsinline ${controls ? 'controls' : ''}></video>`;
+    host.firstChild.onended = onEnd;
+  } else {
+    host.innerHTML = '<div>🎬 Yahan video aayegi</div><small>(abhi demo)</small>';
+    setTimeout(onEnd, 4000);
+  }
+}
+
+
+/* =====================================================================
+   SCREEN 7 : 3D ROOM (samne photo frames, side deewar par TV)
+   ===================================================================== */
+let yaw = 0, target = 0, dragX = null, moved = 0;
+
+const frame = i => {
+  const src = CONFIG.wallPhotos[i];
+  return `<div class="fr" data-photo="${src}"
+    style="background-image:url('${src}')"></div>`;
+};
+function buildRoom() {
+  $('#frontWall').innerHTML = frame(0) + frame(1) + frame(2) + frame(3);
+
+  $('#tvWall').innerHTML =
+    '<div class="tvb"><div class="tv" id="tv"></div><button class="power" id="power">ON</button></div>';
+
+  tvOn = false;
+  drawTV();
+
+  $('#power').onclick = () => {
+    if (moved > 6) return;
+    tvOn = !tvOn;
+    drawTV();
+  };
+
+  yaw = target = 0;
+}
+
+function drawTV() {
+  const tv = $('#tv');
+  const power = $('#power');
+
+  power.textContent = tvOn ? 'OFF' : 'ON';
+  power.className = 'power' + (tvOn ? ' on' : '');
+
+  if (!tvOn) {
+    tv.innerHTML = '';
+    return;
+  }
+
+  tv.innerHTML = `
+    <div class="poster">
+      <span>Birthday TV 📺</span>
+      <button class="btn" id="playTv">▶ Play</button>
+    </div>
+  `;
+  $('#playTv').onclick = () => {
+    if (moved > 6) return;
+    playVideo(tv, CONFIG.tvVideo, () => {
+      if (tvOn) drawTV();
+    });
+  };
+}
+
+/* Frame par click -> badi photo popup */
+function openPhoto(url, i) {
+  const big = $('#photoPop .big');
+  big.style.backgroundImage = url ? `url('${url}')` : '';
+  big.textContent = url ? '' : face(i);
+  $('#photoPop').classList.add('on');
+}
+$('#photoPop').onclick = () => $('#photoPop').classList.remove('on');
+$('#frontWall').onclick = e => {
+  const f = e.target.closest('.fr');
+  if (f && moved < 7) {
+    openPhoto(f.dataset.photo, 0);
+  }
+};
+
+/* Ghumna: ungli/mouse drag ya arrows (sirf samne wali aur TV wali deewar ke beech) */
+const turn = d => target = Math.max(-90, Math.min(0, target + d));
+(function smooth() { yaw += (target - yaw) * .12; $('#rm').style.transform = `rotateY(${yaw}deg)`; requestAnimationFrame(smooth); })();
+$('#leftBtn').onclick = () => turn(-90);
+$('#rightBtn').onclick = () => turn(90);
+$('#stage').onpointerdown = e => { dragX = e.clientX; moved = 0; };
+addEventListener('pointermove', e => { if (dragX !== null) { const dx = e.clientX - dragX; moved += Math.abs(dx); turn(-dx * .3); dragX = e.clientX; } });
+addEventListener('pointerup', () => dragX = null);
+</script>
+</body>
+</html>
